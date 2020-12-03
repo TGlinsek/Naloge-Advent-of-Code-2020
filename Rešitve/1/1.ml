@@ -90,6 +90,7 @@ let naloga2 vsebina_datoteke =
     resi_nalogo vsebina_datoteke 3
 
 
+(* funkcija kopirana iz vzorčnega programa na spletni učilnici *)
 let _ =
     let preberi_datoteko ime_datoteke =
         let chan = open_in ime_datoteke in

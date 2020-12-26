@@ -210,7 +210,7 @@ let primerjaj (seznam : koordinate list) (seznam_sosedov' : koordinate list) : k
 
 (* ---------------------------------------- *)
 
-
+(*
 let rec odstrani_dvojnike_iz_seznama (seznam : 'a list) : 'a list =
     match seznam with
     | x :: xs -> (
@@ -220,7 +220,7 @@ let rec odstrani_dvojnike_iz_seznama (seznam : 'a list) : 'a list =
         @ (odstrani_dvojnike_iz_seznama xs)
     )
     | [] -> []
-
+*)
 
 let transformacija (trenutni_seznam : koordinate list) : koordinate list =  (* transformacija v enem dnevu *)
     (primerjaj trenutni_seznam (seznam_sosedov trenutni_seznam))  (* na koncu morajo biti le enojni *)

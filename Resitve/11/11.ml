@@ -83,7 +83,9 @@ let vrni_stevilo_zasedenih_mest_okoli_polja (tabela : char list list) (x : int) 
 
 
 let rec v_tej_smeri_se_vidi_sedez (tabela : char list list) (x : int) (y : int) (x' : int) (y' : int) : int =
-    match polje_je_zasedeno_2 tabela x y with
+    (*let () = assert (1 <= Int.abs(x') + Int.abs(y') && Int.abs(x') + Int.abs(y') <= 2)
+    in*)
+    match polje_je_zasedeno_2 tabela (x + x') (y + y') with
     | '#' -> 1
     | 'L' -> 0
     | '.' -> v_tej_smeri_se_vidi_sedez tabela (x + x') (y + y') x' y'
@@ -147,6 +149,29 @@ let naredi_tabelo_indeksov (sirina : int) (visina : int) =
 let nova_matrika (nacin_stetja_sosedov : char list list -> int -> int -> int) (meja : int) (tabela : char list list) (sirina : int) (visina : int) tabela_indeksov : char list list =
     List.map (fun vrsta -> List.map (obratno_curryiranje (nov_char_v_polju nacin_stetja_sosedov meja tabela)) vrsta) tabela_indeksov
 
+(*
+let izpisi_seznam sez =
+    let rec pomozna = (function
+        | [] -> print_string "]"
+        | x :: ostanek -> (
+            print_char x; print_string " "; pomozna ostanek;
+        )
+    )
+    in
+    let () = print_string "["
+    in
+    pomozna sez
+
+
+let izpisi_seznam_seznamov sez = 
+    let rec pomozna = function
+        | [] -> print_string "]"
+        | xs :: ostanek -> izpisi_seznam xs; print_string ",\n"; pomozna ostanek
+    in
+    let () = print_string "[\n"
+    in
+    pomozna sez
+*)
 
 let vrni_matriko_ko_se_postopek_konca (nacin_stetja_sosedov : char list list -> int -> int -> int) (meja : int) (tabela : char list list) : char list list =
     let sirina = sirina_tabele tabela
@@ -156,6 +181,8 @@ let vrni_matriko_ko_se_postopek_konca (nacin_stetja_sosedov : char list list -> 
     let tabela_indeksov = naredi_tabelo_indeksov sirina visina
     in
     let rec pomozna (nacin_stetja_sosedov : char list list -> int -> int -> int) (meja : int) (tabela' : char list list) : char list list =
+        (*let () = izpisi_seznam_seznamov tabela'
+        in*)
         let nova = nova_matrika nacin_stetja_sosedov meja tabela' sirina visina tabela_indeksov
         in
         match nova with
@@ -172,10 +199,10 @@ let prestej_vse_zasedene (tabela : char list list) : int =
 let naloga1 (vsebina : string) : string =
     vsebina |> prevedi_vsebino_datoteke_v_seznam |> (List.map iz_stringa_v_seznam_charov) |> ((vrni_matriko_ko_se_postopek_konca vrni_stevilo_zasedenih_mest_okoli_polja) 4) |> prestej_vse_zasedene |> string_of_int
 
-(*
+
 let naloga2 (vsebina : string) : string =
-    vsebina |> prevedi_vsebino_datoteke_v_seznam |> (List.map iz_stringa_v_seznam_charov) |> (vrni_matriko_ko_se_postopek_konca vrne_stevilo_vidnih_zasedenih_sedezev 5) |> prestej_vse_zasedene |> string_of_int
-*)
+    vsebina |> prevedi_vsebino_datoteke_v_seznam |> (List.map iz_stringa_v_seznam_charov) |> ((vrni_matriko_ko_se_postopek_konca vrne_stevilo_vidnih_zasedenih_sedezev) 5) |> prestej_vse_zasedene |> string_of_int
+
 
 let () = Sys.chdir "Resitve"
 let () = Sys.chdir "11"
@@ -195,7 +222,7 @@ let _ =
     in
     let vsebina_datoteke = preberi_datoteko "day_11.in" in
     let odgovor1 = naloga1 vsebina_datoteke
-    (* and odgovor2 = naloga2 vsebina_datoteke *)
+    and odgovor2 = naloga2 vsebina_datoteke
     in
-    izpisi_datoteko "day_11_1.out" odgovor1 (* ;
-    izpisi_datoteko "day_11_2.out" odgovor2*) 
+    izpisi_datoteko "day_11_1.out" odgovor1;
+    izpisi_datoteko "day_11_2.out" odgovor2

@@ -52,6 +52,42 @@ let izracunaj (vrsta : char list) : int =
     fst (pretvori_vrsto vrsta 0 (+))
 
 
+(* predvidevamo, da so vsa števila enomestna *)
+let izracunaj2 (vrsta : char list) : int =
+    let rec pretvori_vrsto (vrsta' : char list) (rezultat : int) (operacija : int -> int -> int) (st_dodatnih_oklepajev : int) : int * char list =
+        match vrsta' with
+        | x :: ostanek -> (
+            match x with
+            | ' ' -> (
+                pretvori_vrsto ostanek rezultat operacija st_dodatnih_oklepajev
+            )
+            | x' when is_digit x' -> (
+                pretvori_vrsto ostanek (operacija rezultat (pretvori_char_v_int x)) (fun a b -> failwith "Neuporabna funkcija!") st_dodatnih_oklepajev
+            )
+            | '+' -> (
+                pretvori_vrsto ostanek rezultat (+) st_dodatnih_oklepajev
+            )
+            | '*' -> (
+                pretvori_vrsto ('(' :: ostanek) rezultat ( * ) 1
+            )
+            | '(' -> (
+                let oklepaj = pretvori_vrsto ostanek 0 (+) 0
+                in
+                if st_dodatnih_oklepajev = 1 then
+                    pretvori_vrsto (')' :: snd oklepaj) (operacija rezultat (fst oklepaj)) (fun a b -> failwith "Neuporabna funkcija!") 0
+                else
+                    pretvori_vrsto (snd oklepaj) (operacija rezultat (fst oklepaj)) (fun a b -> failwith "Neuporabna funkcija!") 0
+            )
+            | ')' -> (
+                (rezultat, ostanek)
+            )
+            | _ -> failwith "Neveljaven znak!"
+        )
+        | [] -> (rezultat, [])
+    in
+    fst (pretvori_vrsto vrsta 0 (+) 0)
+
+
 (*
 let izracunaj2 (vrsta : char list) : int =
     let rec pretvori_vrsto2 (vrsta' : char list) (rezultat : int) (operacija : ((int -> int -> int) * char)) (acc : int) : int * char list =
@@ -93,10 +129,8 @@ let naloga1 (vsebina : string) : string =
     vsebina |> prevedi_vsebino_datoteke_v_seznam_stevil |> List.map iz_stringa_v_seznam_charov |> List.map izracunaj |> List.fold_left (+) 0 |> string_of_int
 
 
-(*
 let naloga2 (vsebina : string) : string =
     vsebina |> prevedi_vsebino_datoteke_v_seznam_stevil |> List.map iz_stringa_v_seznam_charov |> List.map izracunaj2 |> List.fold_left (+) 0 |> string_of_int
-*)
 
 
 let () = Sys.chdir "Resitve"
@@ -117,7 +151,7 @@ let _ =
     in
     let vsebina_datoteke = preberi_datoteko "day_18.in" in
     let odgovor1 = naloga1 vsebina_datoteke
-    (* and odgovor2 = naloga2 vsebina_datoteke *)
+    and odgovor2 = naloga2 vsebina_datoteke
     in
     izpisi_datoteko "day_18_1.out" odgovor1;
-    (* izpisi_datoteko "day_18_2.out" odgovor2 *)
+    izpisi_datoteko "day_18_2.out" odgovor2
